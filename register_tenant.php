@@ -22,11 +22,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $room_number = $_POST['room_number'];
     $id_number = $_POST['id_number'];
     $phone_number = $_POST['phone_number'];
-
-    // For simplicity, we'll generate a random username and password
-    $new_username = strtolower(str_replace(' ', '', $fullname_tenant)) . rand(100, 999);
+    $new_email = trim($_POST['email']);
+    $new_username = trim($_POST['username']);
+    
+    // Default password for new tenants, can be changed later
     $new_password = password_hash('password123', PASSWORD_DEFAULT);
-    $new_email = $new_username . '@pangarms.com';
+
+    // Basic validation
+    if (empty($fullname_tenant) || empty($room_number) || empty($id_number) || empty($phone_number) || empty($new_email) || empty($new_username)) {
+        $error_message = "All fields are required.";
+        $conn->close();
+        return;
+    }
+
+    if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Invalid email format.";
+        $conn->close();
+        return;
+    }
+
+    // Check for uniqueness of email and username
+    $stmt_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR username = ?");
+    $stmt_check->bind_param("ss", $new_email, $new_username);
+    $stmt_check->execute();
+    $stmt_check->bind_result($count);
+    $stmt_check->fetch();
+    $stmt_check->close();
+
+    if ($count > 0) {
+        $error_message = "Email or Username already exists.";
+        $conn->close();
+        return;
+    }
 
     // Begin transaction
     $conn->begin_transaction();
@@ -178,6 +205,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="fullname">Full Name:</label>
                     <input type="text" id="fullname" name="fullname" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" class="form-input" required>
                 </div>
                 
                 <div class="form-group">
