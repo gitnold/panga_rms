@@ -147,7 +147,7 @@ if(isset($_GET['error'])) {
 
         <div class="nav-section">
             <div class="nav-title">MENU</div>
-            <a href="dashboard.php" class="nav-item">
+            <a href="<?php echo ($role === 'caretaker') ? 'caretaker_dashboard.php' : 'dashboard.php'; ?>" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect x="3" y="3" width="7" height="7"/>
                     <rect x="14" y="3" width="7" height="7"/>
@@ -163,6 +163,7 @@ if(isset($_GET['error'])) {
                 </svg>
                 <span>Notifications</span>
             </a>
+            <?php if ($role === 'tenant'): ?>
             <a href="rent.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
@@ -170,6 +171,17 @@ if(isset($_GET['error'])) {
                 </svg>
                 <span>Pay Rent</span>
             </a>
+            <?php elseif ($role === 'caretaker'): ?>
+            <a href="register_tenant.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="17" y1="11" x2="23" y2="11"/>
+                </svg>
+                <span>Register Tenant</span>
+            </a>
+            <?php endif; ?>
             <a href="issues.php" class="nav-item active">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10"/>
