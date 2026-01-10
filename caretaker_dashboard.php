@@ -648,7 +648,7 @@ $conn->close();
                             $rent_status = $row['status'] ? ucfirst(str_replace('_', ' ', $row['status'])) : 'Not Paid';
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['fullname']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['room_number']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['room_number'] ?? '') . "</td>";
                             echo "<td>" . htmlspecialchars($rent_status) . "</td>";
                             echo "</tr>";
                         }
