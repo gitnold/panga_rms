@@ -33,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Insert new user
-        $stmt_user = $conn->prepare("INSERT INTO users (fullname, email, username, password, role) VALUES (?, ?, ?, ?, 'tenant')");
-        $stmt_user->bind_param("ssss", $fullname_tenant, $new_email, $new_username, $new_password);
+        $stmt_user = $conn->prepare("INSERT INTO users (fullname, email, username, password, phone_number, role) VALUES (?, ?, ?, ?, ?, 'tenant')");
+        $stmt_user->bind_param("sssss", $fullname_tenant, $new_email, $new_username, $new_password, $phone_number);
         if (!$stmt_user->execute()) {
             throw new Exception("Error registering user: " . $stmt_user->error);
         }
