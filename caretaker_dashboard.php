@@ -592,7 +592,7 @@ $conn->close();
                 <tbody>
                     <?php
                     $conn = getDBConnection();
-                    $sql = "SELECT i.description, i.status, i.created_at, u.fullname 
+                    $sql = "SELECT i.issue_type, i.description, i.status, i.created_at, u.fullname 
                             FROM issues i 
                             JOIN users u ON i.user_id = u.id 
                             ORDER BY i.created_at DESC";
