@@ -45,9 +45,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_tenant'])) {
     $stmt_remove->close();
 }
 
-// Get all tenants
+// Determine current tenant filter
+$filter_status = $_GET['tenant_status'] ?? 'active'; // Default to active
+
+// Get all tenants based on filter
 $tenants = [];
-$stmt_tenants = $conn->prepare("SELECT id, fullname, email, phone_number, status FROM users WHERE role = 'tenant'");
+$sql_tenants = "SELECT id, fullname, email, phone_number, status FROM users WHERE role = 'tenant'";
+$params = [];
+$types = "";
+
+if ($filter_status !== 'all') {
+    $sql_tenants .= " AND status = ?";
+    $params[] = $filter_status;
+    $types .= "s";
+}
+
+$stmt_tenants = $conn->prepare($sql_tenants);
+if (!empty($params)) {
+    $stmt_tenants->bind_param($types, ...$params);
+}
 $stmt_tenants->execute();
 $result_tenants = $stmt_tenants->get_result();
 while ($row_tenant = $result_tenants->fetch_assoc()) {
@@ -275,7 +291,16 @@ $conn->close();
 
         <!-- Tenant Management -->
         <div class="tenant-management">
-            <h2>Tenant Management</h2>
+            <div class="issues-header">
+                <h2>Tenant Management - <?php echo ucfirst($filter_status); ?> Tenants</h2>
+                <form action="caretaker_dashboard.php" method="GET" class="tenant-filter-form">
+                    <select name="tenant_status" onchange="this.form.submit()">
+                        <option value="active" <?php echo ($filter_status === 'active') ? 'selected' : ''; ?>>Active</option>
+                        <option value="inactive" <?php echo ($filter_status === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
+                        <option value="all" <?php echo ($filter_status === 'all') ? 'selected' : ''; ?>>All</option>
+                    </select>
+                </form>
+            </div>
             <table>
                 <thead>
                     <tr>
