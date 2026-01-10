@@ -28,6 +28,33 @@ if (isset($_SESSION['username'])) {
     $stmt_user->close();
 }
 
+$success_message = '';
+$error_message = '';
+
+// Handle tenant removal (soft delete by changing status)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_tenant'])) {
+    $tenant_id_to_remove = $_POST['tenant_id'];
+
+    $stmt_remove = $conn->prepare("UPDATE users SET status = 'inactive' WHERE id = ? AND role = 'tenant'");
+    $stmt_remove->bind_param("i", $tenant_id_to_remove);
+    if ($stmt_remove->execute()) {
+        $success_message = "Tenant removed successfully.";
+    } else {
+        $error_message = "Error removing tenant: " . $stmt_remove->error;
+    }
+    $stmt_remove->close();
+}
+
+// Get all tenants
+$tenants = [];
+$stmt_tenants = $conn->prepare("SELECT id, fullname, email, phone_number, status FROM users WHERE role = 'tenant'");
+$stmt_tenants->execute();
+$result_tenants = $stmt_tenants->get_result();
+while ($row_tenant = $result_tenants->fetch_assoc()) {
+    $tenants[] = $row_tenant;
+}
+$stmt_tenants->close();
+
 // Get pending issues count
 $pending_issues_count = 0;
 if ($user_id) {
@@ -240,8 +267,44 @@ $conn->close();
                     } else {
                         echo "<tr><td colspan='5'>No issues found</td></tr>";
                     }
-                    $conn->close();
+                    // $conn->close(); // Connection closed at the end of the file
                     ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tenant Management -->
+        <div class="tenant-management">
+            <h2>Tenant Management</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($tenants)): ?>
+                        <?php foreach($tenants as $tenant): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($tenant['fullname']); ?></td>
+                                <td><?php echo htmlspecialchars($tenant['email']); ?></td>
+                                <td><?php echo htmlspecialchars($tenant['phone_number'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tenant['status']); ?></td>
+                                <td>
+                                    <form method="POST" action="caretaker_dashboard.php" style="margin: 0;">
+                                        <input type="hidden" name="tenant_id" value="<?php echo $tenant['id']; ?>">
+                                        <button type="submit" name="remove_tenant" class="remove-btn">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="5">No tenants found.</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -259,7 +322,7 @@ $conn->close();
                 </thead>
                 <tbody>
                     <?php
-                    $conn = getDBConnection();
+                    // $conn = getDBConnection(); // Connection already established
                     $payment_for_month = date('Y-m-01');
                     $sql = "SELECT u.fullname, r.room_number, p.status 
                             FROM users u
