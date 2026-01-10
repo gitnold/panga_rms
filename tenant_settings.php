@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'config.php';
 
 // Check if user is logged in
@@ -9,6 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+
+$conn = getDBConnection();
 
 // Initialize variables
 $current_fullname = '';
