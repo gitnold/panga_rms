@@ -1,6 +1,36 @@
 // Role selection
 const roleButtons = document.querySelectorAll('.role-btn');
+const registerSection = document.querySelector('.register-section'); // Get the register section
 let selectedRole = 'tenant';
+
+function updateFormVisibility(role) {
+    if (role === 'tenant') {
+        registerForm.classList.add('hidden');
+        registerSection.classList.add('hidden'); // Hide the entire register section
+        forgotPassword.classList.remove('hidden'); // Ensure forgot password is visible for login
+        loginForm.classList.remove('hidden'); // Ensure login form is visible
+        isLoginForm = true; // Force to login view
+        formTitle.textContent = 'Welcome to RMS';
+    } else {
+        registerSection.classList.remove('hidden'); // Show register section for other roles
+        // Re-evaluate current form state for non-tenant roles
+        if (isLoginForm) {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            forgotPassword.classList.remove('hidden');
+            toggleText.textContent = "Don't have an account?";
+            toggleFormLink.textContent = 'Register';
+            formTitle.textContent = 'Welcome to RMS';
+        } else {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            forgotPassword.classList.add('hidden');
+            toggleText.textContent = 'Already have an account?';
+            toggleFormLink.textContent = 'Login';
+            formTitle.textContent = 'Create Account';
+        }
+    }
+}
 
 roleButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -9,49 +39,18 @@ roleButtons.forEach(button => {
         selectedRole = this.dataset.role;
         document.getElementById('loginRole').value = selectedRole;
         document.getElementById('registerRole').value = selectedRole;
-
-        if (selectedRole === 'tenant') {
-            registerForm.classList.add('hidden');
-            toggleFormLink.classList.add('hidden'); // Hide the toggle link itself
-            forgotPassword.classList.remove('hidden'); // Ensure forgot password is visible for login
-            loginForm.classList.remove('hidden'); // Ensure login form is visible
-            isLoginForm = true; // Force to login view
-
-            // Optionally, update formTitle to 'Welcome to RMS'
-            formTitle.textContent = 'Welcome to RMS';
-        } else {
-            toggleFormLink.classList.remove('hidden'); // Show toggle link for other roles
-            // Re-evaluate current form state for non-tenant roles
-            if (isLoginForm) {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                forgotPassword.classList.remove('hidden');
-                toggleText.textContent = "Don't have an account?";
-                toggleFormLink.textContent = 'Register';
-                formTitle.textContent = 'Welcome to RMS';
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                forgotPassword.classList.add('hidden');
-                toggleText.textContent = 'Already have an account?';
-                toggleFormLink.textContent = 'Login';
-                formTitle.textContent = 'Create Account';
-            }
-        }
+        updateFormVisibility(selectedRole);
     });
 });
 
-// Initial state setup (or if selected role is tenant initially)
-if (selectedRole === 'tenant') {
-    registerForm.classList.add('hidden');
-    toggleFormLink.classList.add('hidden');
-    forgotPassword.classList.remove('hidden');
-    loginForm.classList.remove('hidden');
-    isLoginForm = true;
-    formTitle.textContent = 'Welcome to RMS';
+// Initial state setup
+// Check selectedRole after initialization. Assume 'tenant' is default if not set
+if (document.getElementById('loginRole').value === 'tenant') {
+    selectedRole = 'tenant';
 } else {
-    toggleFormLink.classList.remove('hidden');
+    selectedRole = 'landlord'; // Or whatever your default non-tenant role is
 }
+updateFormVisibility(selectedRole);
 
 // Toggle between login and register forms
 toggleFormLink.addEventListener('click', function(e) {
