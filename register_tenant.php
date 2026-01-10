@@ -173,14 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="register-tenant-container">
-            <?php if (isset($success_message)): ?>
-                <p class="alert alert-success"><?php echo $success_message; ?></p>
-            <?php endif; ?>
-
-            <?php if (isset($error_message)): ?>
-                <p class="alert alert-error"><?php echo $error_message; ?></p>
-            <?php endif; ?>
-
+            
             <form action="register_tenant.php" method="post" class="register-form">
                 <div class="form-group">
                     <label for="fullname">Full Name:</label>
@@ -225,8 +218,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Check for PHP messages and display toast
-            const successMessage = "<?php echo isset($success_message) ? addslashes($success_message) : ''; ?>";
-            const errorMessage = "<?php echo isset($error_message) ? addslashes($error_message) : ''; ?>";
+            const successMessage = "<?php echo isset($success_message) ? htmlspecialchars($success_message, ENT_QUOTES, 'UTF-8') : ''; ?>";
+            const errorMessage = "<?php echo isset($error_message) ? htmlspecialchars($error_message, ENT_QUOTES, 'UTF-8') : ''; ?>";
 
             if (successMessage) {
                 showToast(successMessage, 'success');
