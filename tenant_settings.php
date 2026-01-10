@@ -1,7 +1,7 @@
     $current_fullname = '';
     $current_phone_number = '';
 
-    $stmt_fetch = $conn->prepare("SELECT fullname, phone_number FROM users WHERE id = ?");
+    $stmt_fetch = $conn->prepare("SELECT fullname, phone_number, password FROM users WHERE id = ?");
     $stmt_fetch->bind_param("i", $user_id);
     $stmt_fetch->execute();
     $result_fetch = $stmt_fetch->get_result();
