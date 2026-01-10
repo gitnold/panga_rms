@@ -112,54 +112,7 @@ if ($user_id && $role === 'tenant') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay Rent - PangaRms</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; display: flex; min-height: 100vh; }
-        .sidebar { width: 240px; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
-        .logo { display: flex; align-items: center; gap: 10px; padding: 25px 20px; border-bottom: 1px solid #e5e7eb; }
-        .logo-icon { width: 40px; height: 40px; background: #2d4d52; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .logo-icon svg { width: 24px; height: 24px; fill: #5a7d82; }
-        .logo-text { font-size: 24px; font-weight: 300; }
-        .logo-text .panga { color: #4ade80; }
-        .logo-text .rms { color: #1f2937; font-weight: 600; }
-        .nav-section { padding: 20px 0; }
-        .nav-title { padding: 0 20px; font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #6b7280; text-decoration: none; transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
-        .nav-item:hover { background: #f9fafb; color: #1f2937; }
-        .nav-item.active { background: #f0fdf4; color: #16a34a; border-left-color: #16a34a; font-weight: 500; }
-        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
-        .nav-separator { height: 1px; background: #e5e7eb; margin: 10px 0; }
-        .main-content { margin-left: 240px; flex: 1; padding: 30px; background: #f5f5f5; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .page-title { font-size: 32px; color: #1f2937; font-weight: 600; }
-        .user-profile { display: flex; align-items: center; gap: 12px; background: white; padding: 10px 15px; border-radius: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4ade80, #3b82f6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; }
-        .user-info { display: flex; flex-direction: column; }
-        .user-name { font-weight: 600; color: #1f2937; font-size: 14px; }
-        .user-email { font-size: 12px; color: #6b7280; }
-
-        /* Rent Page Styles */
-        .rent-container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .rent-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .rent-period { font-size: 16px; color: #6b7280; font-weight: 500; }
-        .rent-status { padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
-        .rent-status.not-paid { background: #fee2e2; color: #ef4444; }
-        .rent-status.paid { background: #dcfce7; color: #22c55e; }
-        .rent-amount { font-size: 36px; font-weight: 700; color: #1f2937; }
-        .rent-amount .currency { color: #f97316; }
-        
-        .payment-details { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .payment-title { font-size: 16px; color: #6b7280; font-weight: 500; margin-bottom: 20px; }
-        .phone-input-wrapper { display: flex; justify-content: center; margin-bottom: 15px; }
-        .phone-input { font-size: 28px; font-weight: 500; padding: 15px 25px; border: 1px solid #e5e7eb; border-radius: 15px; background: #f9fafb; text-align: center; max-width: 400px; width: 100%; }
-        .payment-info { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 30px; }
-        .payment-actions { display: flex; justify-content: center; gap: 15px; }
-        .payment-btn { padding: 12px 30px; border-radius: 25px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s; }
-        .send-prompt-btn { background: #16a34a; color: white; }
-        .send-prompt-btn:hover { background: #15803d; }
-        .check-payment-btn { background: #1f2937; color: white; }
-        .check-payment-btn:hover { background: #374151; }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
     <!-- Sidebar -->
