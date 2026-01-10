@@ -57,13 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['check_payment'])) {
                 // Update existing payment
                 $stmt_update = $conn->prepare("UPDATE payments SET status = 'paid', amount_paid = ?, payment_date = ? WHERE rental_id = ? AND payment_for_month = ?");
                 $stmt_update->bind_param("dsis", $rent_amount_from_rental, $current_time, $rental_id, $payment_for_month);
-                $stmt_update->execute();
+                if ($stmt_update->execute()) {
+                    error_log("Payment UPDATE successful for rental_id: $rental_id, month: $payment_for_month");
+                } else {
+                    error_log("Payment UPDATE failed: " . $stmt_update->error);
+                }
                 $stmt_update->close();
             } else {
                 // Insert new payment
                 $stmt_insert = $conn->prepare("INSERT INTO payments (rental_id, payment_for_month, amount_due, amount_paid, status, payment_date) VALUES (?, ?, ?, ?, 'paid', ?)");
                 $stmt_insert->bind_param("isdds", $rental_id, $payment_for_month, $rent_amount_from_rental, $rent_amount_from_rental, $current_time);
-                $stmt_insert->execute();
+                if ($stmt_insert->execute()) {
+                    error_log("Payment INSERT successful for rental_id: $rental_id, month: $payment_for_month");
+                } else {
+                    error_log("Payment INSERT failed: " . $stmt_insert->error);
+                }
                 $stmt_insert->close();
             }
             header('Location: rent.php?success=' . urlencode('Rent marked as paid for ' . date('F Y')));
