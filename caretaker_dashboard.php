@@ -295,10 +295,12 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($tenant['phone_number'] ?? 'N/A'); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['status']); ?></td>
                                 <td>
+                                    <?php if ($tenant['status'] === 'active'): ?>
                                     <form method="POST" action="caretaker_dashboard.php" style="margin: 0;">
                                         <input type="hidden" name="tenant_id" value="<?php echo $tenant['id']; ?>">
                                         <button type="submit" name="remove_tenant" class="remove-btn">Remove</button>
                                     </form>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
