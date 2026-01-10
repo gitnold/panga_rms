@@ -208,5 +208,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
     </div>
+
+    <div id="toast-notification" class="toast-notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toast-notification');
+
+            // Function to display toast
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = 'toast-notification show ' + type;
+                setTimeout(() => {
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+            }
+
+            // Check for PHP messages and display toast
+            const successMessage = "<?php echo isset($success_message) ? addslashes($success_message) : ''; ?>";
+            const errorMessage = "<?php echo isset($error_message) ? addslashes($error_message) : ''; ?>";
+
+            if (successMessage) {
+                showToast(successMessage, 'success');
+            } else if (errorMessage) {
+                showToast(errorMessage, 'error');
+            }
+        });
+    </script>
 </body>
 </html>
