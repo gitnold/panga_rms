@@ -9,6 +9,7 @@
         $user_data = $result_fetch->fetch_assoc();
         $current_fullname = $user_data['fullname'];
         $current_phone_number = $user_data['phone_number'];
+        $hashed_password = $user_data['password']; // Get hashed password for verification
     }
     $stmt_fetch->close();
 
@@ -37,6 +38,33 @@
         }
     }
 
+    // Handle form submission for changing password
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+        $current_password = $_POST['current_password'];
+        $new_password = $_POST['new_password'];
+        $confirm_new_password = $_POST['confirm_new_password'];
+
+        // Verify current password
+        if (!password_verify($current_password, $hashed_password)) {
+            $error_message = "Incorrect current password.";
+        } elseif ($new_password !== $confirm_new_password) {
+            $error_message = "New passwords do not match.";
+        } elseif (strlen($new_password) < 6) {
+            $error_message = "New password must be at least 6 characters long.";
+        } else {
+            // Hash new password
+            $hashed_new_password = password_hash($new_password, PASSWORD_DEFAULT);
+            $stmt_update_password = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $stmt_update_password->bind_param("si", $hashed_new_password, $user_id);
+
+            if ($stmt_update_password->execute()) {
+                $success_message = "Password updated successfully.";
+            } else {
+                $error_message = "Error updating password: " . $stmt_update_password->error;
+            }
+            $stmt_update_password->close();
+        }
+    }
     $conn->close();
     ?>
 
@@ -102,7 +130,7 @@
 
             <div class="nav-section">
                 <div class="nav-title">GENERAL</div>
-                <a href="tenant_settings.php" class="nav-item active">
+                <a href="settings.php" class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'settings.php') ? 'active' : ''; ?>">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -157,11 +185,31 @@
                     </div>
                     
 
-                    <div class="form-actions">
-                        <button type="submit" name="update_details" class="submit-btn">Update Details</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </body>
-    </html>
+                                    <div class="form-actions">
+                                        <button type="submit" name="update_details" class="submit-btn">Update Details</button>
+                                    </div>
+                                </form>
+                            </div>
+                    
+                            <div class="settings-container" style="margin-top: 20px;">
+                                <h3>Change Password</h3>
+                                <form action="tenant_settings.php" method="post" class="settings-form">
+                                    <div class="form-group">
+                                        <label for="current_password">Current Password:</label>
+                                        <input type="password" id="current_password" name="current_password" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_password">New Password:</label>
+                                        <input type="password" id="new_password" name="new_password" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirm_new_password">Confirm New Password:</label>
+                                        <input type="password" id="confirm_new_password" name="confirm_new_password" class="form-input" required>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" name="change_password" class="submit-btn">Change Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </body>    </html>
