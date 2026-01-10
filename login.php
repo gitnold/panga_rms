@@ -103,8 +103,14 @@ function handleLogin($conn) {
         $_SESSION['role'] = $user['role'];
         $_SESSION['logged_in'] = true;
         
-        // Redirect to dashboard
-        header('Location: dashboard.php');
+        // Redirect to the appropriate dashboard
+        if ($user['role'] === 'tenant') {
+            header('Location: dashboard.php');
+        } elseif ($user['role'] === 'caretaker') {
+            header('Location: caretaker_dashboard.php');
+        } else {
+            header('Location: dashboard.php');
+        }
         exit();
     } else {
         redirect('index.php', 'Invalid credentials', 'error');
