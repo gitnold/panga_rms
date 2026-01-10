@@ -1,7 +1,8 @@
     $current_fullname = '';
     $current_phone_number = '';
+    $current_email = ''; // Initialize current_email
 
-    $stmt_fetch = $conn->prepare("SELECT fullname, phone_number, password FROM users WHERE id = ?");
+    $stmt_fetch = $conn->prepare("SELECT fullname, phone_number, password, email FROM users WHERE id = ?");
     $stmt_fetch->bind_param("i", $user_id);
     $stmt_fetch->execute();
     $result_fetch = $stmt_fetch->get_result();
@@ -9,6 +10,7 @@
         $user_data = $result_fetch->fetch_assoc();
         $current_fullname = $user_data['fullname'];
         $current_phone_number = $user_data['phone_number'];
+        $current_email = $user_data['email']; // Get email from database
         $hashed_password = $user_data['password']; // Get hashed password for verification
     }
     $stmt_fetch->close();
@@ -18,19 +20,22 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_details'])) {
         $new_fullname = trim($_POST['fullname']);
         $new_phone_number = trim($_POST['phone_number']);
+        $new_email = trim($_POST['email']); // Assuming email can be updated
 
-        if (empty($new_fullname) || empty($new_phone_number)) {
+        if (empty($new_fullname) || empty($new_phone_number) || empty($new_email)) {
             $error_message = "All fields are required.";
         } else {
-            $stmt_update = $conn->prepare("UPDATE users SET fullname = ?, phone_number = ? WHERE id = ?");
-            $stmt_update->bind_param("ssi", $new_fullname, $new_phone_number, $user_id);
+            $stmt_update = $conn->prepare("UPDATE users SET fullname = ?, phone_number = ?, email = ? WHERE id = ?");
+            $stmt_update->bind_param("sssi", $new_fullname, $new_phone_number, $new_email, $user_id);
             
             if ($stmt_update->execute()) {
                 $_SESSION['fullname'] = $new_fullname; // Update session with new fullname
+                $_SESSION['email'] = $new_email; // Update session with new email
                 $success_message = "Your details have been updated successfully.";
                 // Refresh current data
                 $current_fullname = $new_fullname;
                 $current_phone_number = $new_phone_number;
+                $current_email = $new_email;
             } else {
                 $error_message = "Error updating details: " . $stmt_update->error;
             }
@@ -154,13 +159,12 @@
             <div class="top-bar">
                 <h1 class="page-title">Tenant Settings</h1>
                 <div class="user-profile">
-                    <div class="user-avatar">
-                        <?php echo strtoupper(substr($fullname, 0, 1)); ?>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name"><?php echo htmlspecialchars($fullname); ?></div>
-                        <div class="user-email"><?php echo htmlspecialchars($email); ?></div>
-                    </div>
+                                    <div class="user-avatar">
+                                        <?php echo strtoupper(substr($current_fullname, 0, 1)); ?>
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="user-name"><?php echo htmlspecialchars($current_fullname); ?></div>
+                                        <div class="user-email"><?php echo htmlspecialchars($current_email); ?></div>                    </div>
                 </div>
             </div>
 
