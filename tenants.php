@@ -11,6 +11,7 @@ $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $role = $_SESSION['role'];
+$user_id = $_SESSION['user_id'];
 
 $conn = getDBConnection();
 
@@ -46,10 +47,10 @@ $sql = "SELECT u.id, u.fullname, u.email, u.phone_number, u.status, p.status as 
         FROM users u
         LEFT JOIN rentals r ON u.id = r.tenant_id AND r.status = 'active'
         LEFT JOIN payments p ON r.id = p.rental_id AND p.payment_for_month = ?
-        WHERE u.role = 'tenant'";
+        WHERE u.role = 'tenant' AND r.caretaker_id = ?";
 
-$params = [$payment_for_month];
-$types = "s";
+$params = [$payment_for_month, $user_id];
+$types = "si";
 
 if (!empty($search_query)) {
     $sql .= " AND (u.fullname LIKE ? OR r.room_number LIKE ?)";
