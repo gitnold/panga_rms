@@ -241,18 +241,9 @@ body {
 }
 
 /* Dashboard Cards */
-.revenue-card-container {
-    margin-bottom: 20px; /* Space between large card and the grid below */
-}
-
-.stat-card.large-card {
-    width: 100%; /* Make it span full width */
-    padding: 40px; /* More padding for a larger feel */
-}
-
-.dashboard-grid-small {
+.dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
@@ -787,4 +778,3 @@ tr:hover {
 .toast-notification.error {
     background-color: #f44336; /* Red background for errors */
 }
-
