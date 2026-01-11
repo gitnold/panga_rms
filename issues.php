@@ -291,7 +291,9 @@ if(isset($_GET['error'])) {
             <div class="issues-header">
                 <h1 class="page-title">Issues</h1>
                 <div class="action-buttons">
+                    <?php if ($role === 'tenant'): ?>
                     <button class="action-btn file-issue-btn">File Issue +</button>
+                    <?php endif; ?>
                 </div>
             </div>
 
