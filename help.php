@@ -38,7 +38,7 @@ $role = $_SESSION['role'];
 
         <div class="nav-section">
             <div class="nav-title">MENU</div>
-            <a href="caretaker_dashboard.php" class="nav-item">
+            <a href="<?php echo ($role === 'caretaker') ? 'caretaker_dashboard.php' : 'dashboard.php'; ?>" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect x="3" y="3" width="7" height="7"/>
                     <rect x="14" y="3" width="7" height="7"/>
@@ -54,6 +54,7 @@ $role = $_SESSION['role'];
                 </svg>
                 <span>Notifications</span>
             </a>
+            <?php if ($role === 'caretaker'): ?>
             <a href="tenants.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -72,6 +73,15 @@ $role = $_SESSION['role'];
                 </svg>
                 <span>Register Tenant</span>
             </a>
+            <?php elseif ($role === 'tenant'): ?>
+            <a href="rent.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                <span>Pay Rent</span>
+            </a>
+            <?php endif; ?>
             <a href="issues.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10"/>

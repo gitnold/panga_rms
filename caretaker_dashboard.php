@@ -181,6 +181,7 @@ $conn->close();
                 </svg>
                 <span>Notifications</span>
             </a>
+            <?php if ($role === 'caretaker'): ?>
             <a href="tenants.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -199,6 +200,15 @@ $conn->close();
                 </svg>
                 <span>Register Tenant</span>
             </a>
+            <?php elseif ($role === 'tenant'): ?>
+            <a href="rent.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                <span>Pay Rent</span>
+            </a>
+            <?php endif; ?>
             <a href="issues.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10"/>
