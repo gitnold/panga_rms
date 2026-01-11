@@ -11,22 +11,9 @@ $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $role = $_SESSION['role'];
+$user_id = $_SESSION['user_id'];
 
 $conn = getDBConnection();
-
-// Get user ID from username
-$user_id = null;
-if (isset($_SESSION['username'])) {
-    $stmt_user = $conn->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt_user->bind_param("s", $_SESSION['username']);
-    $stmt_user->execute();
-    $result_user = $stmt_user->get_result();
-    if ($result_user->num_rows > 0) {
-        $user = $result_user->fetch_assoc();
-        $user_id = $user['id'];
-    }
-    $stmt_user->close();
-}
 
 // Handle tenant deactivation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deactivate_tenant'])) {
@@ -63,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tenant'])) {
 // Get pending issues count
 $pending_issues_count = 0;
 if ($user_id) {
-    $sql_issues = "SELECT COUNT(*) AS count FROM issues WHERE status = 'pending'";
+    $sql_issues = "SELECT COUNT(*) AS count FROM issues i JOIN rentals r ON i.user_id = r.tenant_id WHERE i.status = 'pending' AND r.caretaker_id = ?";
     $stmt_issues = $conn->prepare($sql_issues);
+    $stmt_issues->bind_param("i", $user_id);
     $stmt_issues->execute();
     $result_issues = $stmt_issues->get_result();
     if ($result_issues) {
@@ -91,11 +79,34 @@ if ($user_id) {
 
 // Get number of tenants
 $tenants_count = 0;
-$sql_tenants = "SELECT COUNT(*) AS count FROM users WHERE role = 'tenant'";
-$result_tenants = $conn->query($sql_tenants);
+$sql_tenants = "SELECT COUNT(*) AS count FROM users u JOIN rentals r ON u.id = r.tenant_id WHERE u.role = 'tenant' AND r.caretaker_id = ?";
+$stmt_tenants = $conn->prepare($sql_tenants);
+$stmt_tenants->bind_param("i", $user_id);
+$stmt_tenants->execute();
+$result_tenants = $stmt_tenants->get_result();
 if ($result_tenants) {
     $row_tenants = $result_tenants->fetch_assoc();
     $tenants_count = $row_tenants['count'];
+}
+$stmt_tenants->close();
+
+// Get monthly revenue
+$monthly_revenue = 0;
+if ($user_id) {
+    $current_month = date('Y-m-01');
+    $sql_revenue = "SELECT SUM(p.amount_paid) AS total_revenue 
+                    FROM payments p 
+                    JOIN rentals r ON p.rental_id = r.id 
+                    WHERE r.caretaker_id = ? AND p.payment_for_month = ?";
+    $stmt_revenue = $conn->prepare($sql_revenue);
+    $stmt_revenue->bind_param("is", $user_id, $current_month);
+    $stmt_revenue->execute();
+    $result_revenue = $stmt_revenue->get_result();
+    if ($result_revenue) {
+        $row_revenue = $result_revenue->fetch_assoc();
+        $monthly_revenue = $row_revenue['total_revenue'] ?? 0;
+    }
+    $stmt_revenue->close();
 }
 
 
@@ -130,6 +141,19 @@ $conn->close();
 
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
+            <div class="stat-card blue" style="text-decoration: none; color: white;">
+                <div class="stat-header">
+                    <span class="stat-label">MONTHLY REVENUE</span>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value">Ksh <?php echo number_format($monthly_revenue, 2); ?></div>
+                <div class="stat-description">Revenue for this month</div>
+            </div>
+
             <a href="notifications.php" class="stat-card orange" style="text-decoration: none; color: white;">
                 <div class="stat-header">
                     <span class="stat-label">NOTIFICATIONS</span>

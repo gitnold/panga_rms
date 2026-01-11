@@ -277,6 +277,11 @@ body {
     color: white;
 }
 
+.stat-card.blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
 .stat-header {
     display: flex;
     justify-content: space-between;
