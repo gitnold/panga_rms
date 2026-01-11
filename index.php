@@ -62,6 +62,9 @@
                 <div class="form-group">
                     <input type="email" name="email" class="form-input" placeholder="Email" required>
                 </div>
+                <div class="form-group" id="phone-number-group">
+                    <input type="text" name="phone_number" class="form-input" placeholder="Phone Number" required>
+                </div>
                 <div class="form-group">
                     <input type="text" name="username" class="form-input" placeholder="Username" required>
                 </div>

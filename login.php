@@ -21,10 +21,16 @@ function handleRegistration($conn) {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? 'tenant';
+    $phone_number = trim($_POST['phone_number'] ?? '');
     
     // Validation
     if (empty($fullname) || empty($email) || empty($username) || empty($password)) {
         redirect('index.php', 'All fields are required', 'error');
+        return;
+    }
+
+    if ($role === 'caretaker' && empty($phone_number)) {
+        redirect('index.php', 'Phone number is required for caretakers', 'error');
         return;
     }
     
@@ -58,8 +64,8 @@ function handleRegistration($conn) {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     
     // Insert new user
-    $stmt = $conn->prepare("INSERT INTO users (fullname, email, username, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("sssss", $fullname, $email, $username, $hashed_password, $role);
+    $stmt = $conn->prepare("INSERT INTO users (fullname, email, username, password, role, phone_number, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("ssssss", $fullname, $email, $username, $hashed_password, $role, $phone_number);
     
     if ($stmt->execute()) {
         redirect('index.php', 'Registration successful! Please login.', 'success');

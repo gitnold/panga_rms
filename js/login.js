@@ -10,6 +10,8 @@ const formTitle = document.getElementById('formTitle');
 let isLoginForm = true;
 let selectedRole = 'tenant';
 
+const phoneNumberGroup = document.getElementById('phone-number-group');
+
 function updateFormVisibility(role) {
     if (role === 'tenant') {
         registerForm.classList.add('hidden');
@@ -18,6 +20,7 @@ function updateFormVisibility(role) {
         loginForm.classList.remove('hidden'); // Ensure login form is visible
         isLoginForm = true; // Force to login view
         formTitle.textContent = 'Welcome to RMS';
+        phoneNumberGroup.classList.add('hidden');
     } else {
         registerSection.classList.remove('hidden'); // Show register section for other roles
         // Re-evaluate current form state for non-tenant roles
@@ -35,6 +38,12 @@ function updateFormVisibility(role) {
             toggleText.textContent = 'Already have an account?';
             toggleFormLink.textContent = 'Login';
             formTitle.textContent = 'Create Account';
+        }
+
+        if (role === 'caretaker') {
+            phoneNumberGroup.classList.remove('hidden');
+        } else {
+            phoneNumberGroup.classList.add('hidden');
         }
     }
 }
