@@ -187,21 +187,24 @@ if ($user_id) {
         <div class="notifications-container">
             <?php if (!empty($notifications)): ?>
                 <?php foreach($notifications as $notification): ?>
-                    <div class="notification-item">
-                        <span class="sender-tag"><?php echo htmlspecialchars($notification['sender_role']); ?></span>
-                        <div class="notification-content">
-                            <strong><?php echo htmlspecialchars($notification['title']); ?></strong>
-                        </div>
-                        <form method="POST" action="notifications.php" style="margin: 0;">
-                            <input type="hidden" name="notification_id" value="<?php echo $notification['id']; ?>">
-                            <?php if ($notification['title'] === 'Issue Resolved'): ?>
-                                <input type="hidden" name="issue_id" value="<?php echo $notification['issue_id']; ?>">
-                                <button type="submit" name="mark_as_finished" class="mark-read-btn">Mark as Finished</button>
-                            <?php else: ?>
-                                <button type="submit" name="mark_as_read" class="mark-read-btn">Mark as Read</button>
-                            <?php endif; ?>
-                        </form>
-                    </div>
+                    <?php
+                    $item_html = '<span class="sender-tag">' . htmlspecialchars($notification['sender_role']) . '</span>' .
+                                 '<div class="notification-content"><strong>' . htmlspecialchars($notification['title']) . '</strong></div>';
+
+                    if ($notification['title'] === 'Issue Resolved' && $role === 'tenant') {
+                        echo '<a href="view_issue.php?issue_id=' . $notification['issue_id'] . '&notification_id=' . $notification['id'] . '" class="notification-item">';
+                        echo $item_html;
+                        echo '</a>';
+                    } else {
+                        echo '<div class="notification-item">';
+                        echo $item_html;
+                        echo '<form method="POST" action="notifications.php" style="margin: 0;">' .
+                             '<input type="hidden" name="notification_id" value="' . $notification['id'] . '">' .
+                             '<button type="submit" name="mark_as_read" class="mark-read-btn">Mark as Read</button>' .
+                             '</form>';
+                        echo '</div>';
+                    }
+                    ?>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="no-notifications">
