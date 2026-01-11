@@ -1,6 +1,13 @@
 // Role selection
 const roleButtons = document.querySelectorAll('.role-btn');
 const registerSection = document.querySelector('.register-section'); // Get the register section
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const forgotPassword = document.getElementById('forgotPassword');
+const toggleText = document.getElementById('toggleText');
+const toggleFormLink = document.getElementById('toggleForm');
+const formTitle = document.getElementById('formTitle');
+let isLoginForm = true;
 let selectedRole = 'tenant';
 
 function updateFormVisibility(role) {
