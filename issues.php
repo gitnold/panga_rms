@@ -10,24 +10,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $email = $_SESSION['email'];
-$role = $_SESSION['role']; // Directly use role from session
+$role = $_SESSION['role'];
+$user_id = $_SESSION['user_id'];
 
 $conn = getDBConnection();
-
-// Get user ID from username
-// NOTE: It would be more efficient to store the user_id in the session upon login.
-$user_id = null;
-if (isset($_SESSION['username'])) {
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt->bind_param("s", $_SESSION['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        $user_id = $user['id'];
-    }
-    $stmt->close();
-}
 
 $error_message = '';
 $success_message = '';
@@ -139,25 +125,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_issue'])) {
 
 // Fetch issues based on role
 $issues = [];
-$sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
-        FROM issues i 
-        JOIN users u ON i.user_id = u.id 
-        WHERE i.status = 'pending'";
-
 if ($role === 'tenant') {
-    $sql .= " AND i.user_id = ?";
-}
-
-$sql .= " ORDER BY i.created_at DESC";
-$stmt = $conn->prepare($sql);
-
-if ($role === 'tenant' && $user_id) {
+    $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
+            FROM issues i 
+            JOIN users u ON i.user_id = u.id 
+            WHERE i.status = 'pending' AND i.user_id = ?
+            ORDER BY i.created_at DESC";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
+} elseif ($role === 'caretaker') {
+    $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
+            FROM issues i 
+            JOIN users u ON i.user_id = u.id 
+            JOIN rentals r ON i.user_id = r.tenant_id
+            WHERE i.status = 'pending' AND r.caretaker_id = ?
+            ORDER BY i.created_at DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+} else {
+    $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
+            FROM issues i 
+            JOIN users u ON i.user_id = u.id 
+            WHERE i.status = 'pending'
+            ORDER BY i.created_at DESC";
+    $stmt = $conn->prepare($sql);
 }
 
 $stmt->execute();
 $result = $stmt->get_result();
-
 
 if ($result && $result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
