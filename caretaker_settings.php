@@ -126,7 +126,7 @@ $conn->close();
                 
                 <div class="form-group">
                     <label for="phone_number" class="form-label">Phone Number:</label>
-                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_phone_number); ?>" required>
+                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_phone_number ?? ''); ?>" required>
                 </div>
                 
                 <div class="form-group">
