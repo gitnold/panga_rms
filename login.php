@@ -17,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 function handleRegistration($conn) {
     $fullname = trim($_POST['fullname'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $phone_number = trim($_POST['phone_number'] ?? '');
+    $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? 'tenant';
     
     // Validation
-    if (empty($fullname) || empty($email) || empty($phone_number) || empty($password)) {
+    if (empty($fullname) || empty($email) || empty($username) || empty($password)) {
         redirect('index.php', 'All fields are required', 'error');
         return;
     }
@@ -43,14 +43,14 @@ function handleRegistration($conn) {
         return;
     }
     
-    // Check if email or phone number already exists
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? OR phone_number = ?");
-    $stmt->bind_param("ss", $email, $phone_number);
+    // Check if username or email already exists
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+    $stmt->bind_param("ss", $username, $email);
     $stmt->execute();
     $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
-        redirect('index.php', 'Email or phone number already exists', 'error');
+        redirect('index.php', 'Username or email already exists', 'error');
         return;
     }
     
@@ -58,8 +58,8 @@ function handleRegistration($conn) {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     
     // Insert new user
-    $stmt = $conn->prepare("INSERT INTO users (fullname, email, phone_number, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("sssss", $fullname, $email, $phone_number, $hashed_password, $role);
+    $stmt = $conn->prepare("INSERT INTO users (fullname, email, username, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("sssss", $fullname, $email, $username, $hashed_password, $role);
     
     if ($stmt->execute()) {
         redirect('index.php', 'Registration successful! Please login.', 'success');
@@ -71,18 +71,18 @@ function handleRegistration($conn) {
 }
 
 function handleLogin($conn) {
-    $login_identifier = trim($_POST['login_identifier'] ?? '');
+    $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? 'tenant';
     
-    if (empty($login_identifier) || empty($password)) {
-        redirect('index.php', 'Please enter email/phone number and password', 'error');
+    if (empty($username) || empty($password)) {
+        redirect('index.php', 'Please enter username and password', 'error');
         return;
     }
     
     // Check if user exists
-    $stmt = $conn->prepare("SELECT id, fullname, email, phone_number, password, role FROM users WHERE (email = ? OR phone_number = ?) AND role = ?");
-    $stmt->bind_param("sss", $login_identifier, $login_identifier, $role);
+    $stmt = $conn->prepare("SELECT id, fullname, username, email, password, role FROM users WHERE (username = ? OR email = ?) AND role = ?");
+    $stmt->bind_param("sss", $username, $username, $role);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -97,9 +97,9 @@ function handleLogin($conn) {
     if (password_verify($password, $user['password'])) {
         // Set session variables
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
         $_SESSION['fullname'] = $user['fullname'];
         $_SESSION['email'] = $user['email'];
-        $_SESSION['phone_number'] = $user['phone_number'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['logged_in'] = true;
         

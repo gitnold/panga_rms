@@ -34,18 +34,23 @@ $stmt_fetch->close();
 // Handle form submission for updating details
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_details'])) {
     $new_fullname = trim($_POST['fullname']);
+    $new_phone_number = trim($_POST['phone_number']);
+    $new_email = trim($_POST['email']);
 
-    if (empty($new_fullname)) {
-        $error_message = "Full name is required.";
+    if (empty($new_fullname) || empty($new_phone_number) || empty($new_email)) {
+        $error_message = "All fields are required.";
     } else {
-        $stmt_update = $conn->prepare("UPDATE users SET fullname = ? WHERE id = ?");
-        $stmt_update->bind_param("si", $new_fullname, $user_id);
+        $stmt_update = $conn->prepare("UPDATE users SET fullname = ?, phone_number = ?, email = ? WHERE id = ?");
+        $stmt_update->bind_param("sssi", $new_fullname, $new_phone_number, $new_email, $user_id);
         
         if ($stmt_update->execute()) {
             $_SESSION['fullname'] = $new_fullname;
+            $_SESSION['email'] = $new_email;
             $success_message = "Your details have been updated successfully.";
             // Refresh current data
             $current_fullname = $new_fullname;
+            $current_phone_number = $new_phone_number;
+            $current_email = $new_email;
         } else {
             $error_message = "Error updating details: " . $stmt_update->error;
         }
@@ -121,12 +126,12 @@ $conn->close();
                 
                 <div class="form-group">
                     <label for="phone_number" class="form-label">Phone Number:</label>
-                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_phone_number ?? ''); ?>" readonly>
+                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_phone_number ?? ''); ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" id="email" name="email" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_email); ?>" readonly>
+                    <input type="email" id="email" name="email" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_email); ?>" required>
                 </div>
 
                 <div class="form-actions">

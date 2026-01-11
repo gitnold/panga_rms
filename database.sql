@@ -9,26 +9,28 @@ CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     fullname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    phone_number VARCHAR(20) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
     role ENUM('tenant', 'caretaker', 'landlord') NOT NULL DEFAULT 'tenant',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
     status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    INDEX idx_username (username),
     INDEX idx_email (email),
     INDEX idx_role (role)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Optional: Create a sample admin user
 -- Password: admin123 (hashed)
-INSERT IGNORE INTO users (fullname, email, phone_number, password, role) VALUES 
-('Admin User', 'admin@pangarms.com', '0712345678', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'landlord');
+INSERT IGNORE INTO users (fullname, email, username, password, role) VALUES 
+('Admin User', 'admin@pangarms.com', 'admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'landlord');
 
 -- Sample Tenant User
 -- Password: tenant123 (hashed, same as admin for simplicity in this example)
-INSERT IGNORE INTO users (id, fullname, email, phone_number, password, role) VALUES 
-(2, 'Tenant User', 'tenant@pangarms.com', '0787654321', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'tenant');
+INSERT IGNORE INTO users (id, fullname, email, username, password, role) VALUES 
+(2, 'Tenant User', 'tenant@pangarms.com', 'tenant', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'tenant');
 
 
 -- Create properties table (for future use)
