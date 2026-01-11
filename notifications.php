@@ -102,6 +102,15 @@ if ($user_id) {
                 </svg>
                 <span>Tenants</span>
             </a>
+            <a href="register_tenant.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="17" y1="11" x2="23" y2="11"/>
+                </svg>
+                <span>Register Tenant</span>
+            </a>
             <a href="issues.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 <span>Issues</span>
