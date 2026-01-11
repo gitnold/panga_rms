@@ -77,19 +77,20 @@ toggleFormLink.addEventListener('click', function(e) {
 
 // Handle URL parameters for messages
 const urlParams = new URLSearchParams(window.location.search);
-const alertBox = document.getElementById('alertBox');
+const toast = document.getElementById('toast-notification');
 
 if (urlParams.has('success')) {
-    showAlert(urlParams.get('success'), 'success');
+    showToast(urlParams.get('success'), 'success');
 }
 if (urlParams.has('error')) {
-    showAlert(urlParams.get('error'), 'error');
+    showToast(urlParams.get('error'), 'error');
 }
 
-function showAlert(message, type) {
-    const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
-    alertBox.innerHTML = `<div class="alert ${alertClass}">${decodeURIComponent(message)}</div>`;
+function showToast(message, type) {
+    toast.textContent = decodeURIComponent(message);
+    toast.className = 'toast-notification show ' + (type === 'error' ? 'error' : '');
+
     setTimeout(() => {
-        alertBox.innerHTML = '';
-    }, 5000);
+        toast.className = toast.className.replace('show', '');
+    }, 3000);
 }

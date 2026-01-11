@@ -26,7 +26,7 @@
                 <h1><span class="wave">👋</span> <span id="formTitle">Welcome to RMS</span></h1>
             </div>
 
-            <div id="alertBox"></div>
+            <div id="toast-notification" class="toast-notification"></div>
 
             <div class="role-selector">
                 <p>Please select a role</p>
