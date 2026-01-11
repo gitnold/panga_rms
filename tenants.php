@@ -40,14 +40,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tenant'])) {
 // Fetch all tenants with their rent status for the current month
 $tenants = [];
 $payment_for_month = date('Y-m-01');
-$sql = "SELECT u.id, u.fullname, u.email, u.phone_number, u.status, p.status as rent_status
+$search_query = $_GET['search'] ?? '';
+
+$sql = "SELECT u.id, u.fullname, u.email, u.phone_number, u.status, p.status as rent_status, r.room_number
         FROM users u
         LEFT JOIN rentals r ON u.id = r.tenant_id AND r.status = 'active'
         LEFT JOIN payments p ON r.id = p.rental_id AND p.payment_for_month = ?
         WHERE u.role = 'tenant'";
 
+$params = [$payment_for_month];
+$types = "s";
+
+if (!empty($search_query)) {
+    $sql .= " AND (u.fullname LIKE ? OR r.room_number LIKE ?)";
+    $params[] = '%' . $search_query . '%';
+    $params[] = '%' . $search_query . '%';
+    $types .= "ss";
+}
+
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $payment_for_month);
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -87,12 +99,19 @@ $conn->close();
         </div>
 
         <div class="tenant-list-container">
+            <div class="tenant-search-bar">
+                <form action="tenants.php" method="GET" class="search-form">
+                    <input type="text" name="search" placeholder="Search by name or room number..." value="<?php echo htmlspecialchars($search_query); ?>">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
             <table>
                 <thead>
                     <tr>
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Phone Number</th>
+                        <th>Room Number</th>
                         <th>Status</th>
                         <th>Rent Status</th>
                         <th>Actions</th>
@@ -105,6 +124,7 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($tenant['fullname']); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['email']); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['phone_number'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($tenant['room_number'] ?? 'N/A'); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['status']); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['rent_status'] ?? 'Not Paid'); ?></td>
                                 <td>
@@ -121,7 +141,7 @@ $conn->close();
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6">No tenants found.</td>
+                            <td colspan="7">No tenants found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
