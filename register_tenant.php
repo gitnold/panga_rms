@@ -205,32 +205,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form action="register_tenant.php" method="post" class="register-form">
                 <div class="form-group">
                     <label for="fullname">Full Name:</label>
-                    <input type="text" id="fullname" name="fullname" class="form-input" required>
+                    <input type="text" id="fullname" name="fullname" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" class="form-input" required>
+                    <input type="email" id="email" name="email" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" class="form-input" required>
+                    <input type="text" id="username" name="username" class="form-input form-input-light" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="room_number">Room Number:</label>
-                    <input type="text" id="room_number" name="room_number" class="form-input" required>
+                    <input type="text" id="room_number" name="room_number" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-group">
                     <label for="id_number">ID Number:</label>
-                    <input type="text" id="id_number" name="id_number" class="form-input" required>
+                    <input type="text" id="id_number" name="id_number" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-group">
                     <label for="phone_number">Phone Number:</label>
-                    <input type="text" id="phone_number" name="phone_number" class="form-input" required>
+                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-actions">

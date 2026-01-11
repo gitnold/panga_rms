@@ -24,3 +24,19 @@
     border-color: #4ade80;
     background: rgba(255, 255, 255, 0.15);
 }
+
+.form-input-light{
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    color: #1f2937;
+}
+
+.form-input-light::placeholder {
+    color: #9ca3af;
+}
+
+.form-input-light:focus {
+    outline: none;
+    border-color: #4ade80;
+    background: #f9fafb;
+}
