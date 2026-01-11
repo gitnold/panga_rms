@@ -189,7 +189,7 @@ if ($user_id) {
                 <?php foreach($notifications as $notification): ?>
                     <?php
                     $item_html = '<span class="sender-tag">' . htmlspecialchars($notification['sender_role']) . '</span>' .
-                                 '<div class="notification-content"><strong>' . htmlspecialchars($notification['title']) . '</strong></div>';
+                                 '<div class="notification-content"><strong>' . htmlspecialchars($notification['title']) . '</strong>: ' . htmlspecialchars($notification['message']) . '</div>';
 
                     if ($notification['title'] === 'Issue Resolved' && $role === 'tenant') {
                         echo '<a href="view_issue.php?issue_id=' . $notification['issue_id'] . '&notification_id=' . $notification['id'] . '" class="notification-item">';
