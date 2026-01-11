@@ -56,6 +56,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_issue'])) {
     }
 }
 
+// Handle issue completion by caretaker
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_issue'])) {
+    $issue_id = $_POST['issue_id'];
+    if ($user_id && $issue_id && $role === 'caretaker') {
+        // Update issue status
+        $stmt_update = $conn->prepare("UPDATE issues SET status = 'completed' WHERE id = ?");
+        $stmt_update->bind_param("i", $issue_id);
+        
+        if ($stmt_update->execute()) {
+            // Get tenant user_id for the issue
+            $stmt_tenant = $conn->prepare("SELECT user_id FROM issues WHERE id = ?");
+            $stmt_tenant->bind_param("i", $issue_id);
+            $stmt_tenant->execute();
+            $result_tenant = $stmt_tenant->get_result();
+            if ($result_tenant->num_rows > 0) {
+                $issue_tenant = $result_tenant->fetch_assoc();
+                $tenant_id = $issue_tenant['user_id'];
+
+                // Create a notification for the tenant
+                $notification_title = "Issue Completed";
+                $notification_message = "Your issue has been marked as completed by the caretaker.";
+                $stmt_notification = $conn->prepare("INSERT INTO notifications (sender_id, title, message) VALUES (?, ?, ?)");
+                $stmt_notification->bind_param("iss", $user_id, $notification_title, $notification_message);
+                $stmt_notification->execute();
+                $notification_id = $stmt_notification->insert_id;
+
+                // Add recipient to the notification
+                $stmt_recipient = $conn->prepare("INSERT INTO notification_recipients (notification_id, recipient_id) VALUES (?, ?)");
+                $stmt_recipient->bind_param("ii", $notification_id, $tenant_id);
+                $stmt_recipient->execute();
+            }
+
+            header('Location: issues.php?success=' . urlencode('Issue has been marked as completed.'));
+            exit();
+        } else {
+            $error_message = "Error: Could not complete the issue.";
+        }
+    }
+}
+
 // Handle issue removal (soft delete by changing status)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_issue'])) {
     $issue_id = $_POST['issue_id'];
@@ -267,7 +307,7 @@ if(isset($_GET['error'])) {
                             <?php endif; ?>
                             <form method="POST" action="issues.php" style="margin: 0;">
                                 <input type="hidden" name="issue_id" value="<?php echo $issue['id']; ?>">
-                                <button type="submit" name="remove_issue" class="remove-btn">Remove</button>
+                                <button type="submit" name="complete_issue" class="remove-btn">Complete</button>
                             </form>
                         </div>
                     <?php endforeach; ?>

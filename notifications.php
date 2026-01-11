@@ -40,14 +40,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_as_read'])) {
     }
 }
 
+// Handle marking issue as finished by tenant
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_as_finished'])) {
+    $notification_id = $_POST['notification_id'];
+    $issue_id = $_POST['issue_id'];
+
+    if ($user_id && $notification_id && $issue_id) {
+        // Mark notification as read
+        $stmt_notification = $conn->prepare("UPDATE notification_recipients SET is_read = TRUE, read_at = NOW() WHERE notification_id = ? AND recipient_id = ?");
+        $stmt_notification->bind_param("ii", $notification_id, $user_id);
+        $stmt_notification->execute();
+        $stmt_notification->close();
+
+        // Close the issue
+        $stmt_issue = $conn->prepare("UPDATE issues SET status = 'closed' WHERE id = ? AND user_id = ?");
+        $stmt_issue->bind_param("ii", $issue_id, $user_id);
+        $stmt_issue->execute();
+        $stmt_issue->close();
+
+        header('Location: notifications.php?success=' . urlencode('Issue marked as finished.'));
+        exit();
+    }
+}
+
 // Fetch unread notifications
 $notifications = [];
 if ($user_id) {
-    $sql = "SELECT n.id, n.title, n.message, n.created_at, u.role as sender_role, s.fullname as sender_name
+    $sql = "SELECT n.id, n.title, n.message, n.created_at, u.role as sender_role, s.fullname as sender_name, i.id as issue_id
             FROM notifications n
             JOIN notification_recipients nr ON n.id = nr.notification_id
             JOIN users u ON n.sender_id = u.id
             JOIN users s ON n.sender_id = s.id
+            LEFT JOIN issues i ON n.title = 'Issue Completed' AND i.user_id = nr.recipient_id
             WHERE nr.recipient_id = ? AND nr.is_read = FALSE
             ORDER BY n.created_at DESC";
     
@@ -170,7 +194,12 @@ if ($user_id) {
                         </div>
                         <form method="POST" action="notifications.php" style="margin: 0;">
                             <input type="hidden" name="notification_id" value="<?php echo $notification['id']; ?>">
-                            <button type="submit" name="mark_as_read" class="mark-read-btn">Mark as Read</button>
+                            <?php if ($notification['title'] === 'Issue Completed'): ?>
+                                <input type="hidden" name="issue_id" value="<?php echo $notification['issue_id']; ?>">
+                                <button type="submit" name="mark_as_finished" class="mark-read-btn">Mark as Finished</button>
+                            <?php else: ?>
+                                <button type="submit" name="mark_as_read" class="mark-read-btn">Mark as Read</button>
+                            <?php endif; ?>
                         </form>
                     </div>
                 <?php endforeach; ?>
