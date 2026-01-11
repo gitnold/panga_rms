@@ -4,16 +4,14 @@ const issueTypeSelect = document.getElementById('issue_type');
 const openModalButtons = document.querySelectorAll('.action-btn');
 const closeModalButton = document.getElementById('close-modal');
 
-openModalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const issueType = button.getAttribute('data-type');
-        if (issueType) {
-            issueTypeSelect.value = issueType;
-            modalTitle.textContent = 'New ' + issueType.charAt(0).toUpperCase() + issueType.slice(1);
-        }
+const openModalButton = document.querySelector('.file-issue-btn');
+
+if (openModalButton) {
+    openModalButton.addEventListener('click', () => {
+        modalTitle.textContent = 'New Issue';
         issueModal.style.display = 'flex';
     });
-});
+}
 
 function closeModal() {
     issueModal.style.display = 'none';

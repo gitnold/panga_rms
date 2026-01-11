@@ -458,19 +458,11 @@ tr:hover {
     transition: all 0.3s;
 }
 
-.action-btn.repair {
-    background-color: #f97316;
-    color: white;
-}
-.action-btn.repair:hover {
-    background-color: #ea580c;
-}
-
-.action-btn.complain {
+.action-btn.file-issue-btn {
     background-color: #1f2937;
     color: white;
 }
-.action-btn.complain:hover {
+.action-btn.file-issue-btn:hover {
     background-color: #374151;
 }
 

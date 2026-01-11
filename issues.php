@@ -243,8 +243,7 @@ if(isset($_GET['error'])) {
             <div class="issues-header">
                 <h1 class="page-title">Issues</h1>
                 <div class="action-buttons">
-                    <button class="action-btn repair" data-type="repair">Repair +</button>
-                    <button class="action-btn complain" data-type="complaint">Complain +</button>
+                    <button class="action-btn file-issue-btn">File Issue +</button>
                 </div>
             </div>
 
