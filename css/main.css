@@ -575,6 +575,10 @@ tr:hover {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
+    color: #374151;
+}
+
+.modal-content .form-group label {
     color: #d1d5db;
 }
 
