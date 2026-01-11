@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span>Pay Rent</span>
             </a>
             <?php elseif ($role === 'caretaker'): ?>
-            <a href="tenants.php" class="nav-item active">
+            <a href="tenants.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="8.5" cy="7" r="4"/>
@@ -150,6 +150,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <line x1="17" y1="11" x2="23" y2="11"/>
                 </svg>
                 <span>Tenants</span>
+            </a>
+            <a href="register_tenant.php" class="nav-item active">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="17" y1="11" x2="23" y2="11"/>
+                </svg>
+                <span>Register Tenant</span>
             </a>
             <?php endif; ?>
             <a href="issues.php" class="nav-item">
