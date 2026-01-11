@@ -28,60 +28,11 @@ if (isset($_SESSION['username'])) {
     $stmt_user->close();
 }
 
-$success_message = '';
-$error_message = '';
-
-// Handle tenant removal (soft delete by changing status)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_tenant'])) {
-    $tenant_id_to_remove = $_POST['tenant_id'];
-
-    $stmt_remove = $conn->prepare("UPDATE users SET status = 'inactive' WHERE id = ? AND role = 'tenant'");
-    $stmt_remove->bind_param("i", $tenant_id_to_remove);
-    if ($stmt_remove->execute()) {
-        $success_message = "Tenant removed successfully.";
-    } else {
-        $error_message = "Error removing tenant: " . $stmt_remove->error;
-    }
-    $stmt_remove->close();
-}
-
-// Determine current tenant filter
-$filter_status = $_GET['tenant_status'] ?? 'active'; // Default to active
-
-// Get all tenants based on filter
-$tenants = [];
-$sql_tenants = "SELECT id, fullname, email, phone_number, status FROM users WHERE role = 'tenant'";
-$params = [];
-$types = "";
-
-if ($filter_status !== 'all') {
-    $sql_tenants .= " AND status = ?";
-    $params[] = $filter_status;
-    $types .= "s";
-}
-
-$stmt_tenants = $conn->prepare($sql_tenants);
-if (!empty($params)) {
-    $stmt_tenants->bind_param($types, ...$params);
-}
-$stmt_tenants->execute();
-$result_tenants = $stmt_tenants->get_result();
-while ($row_tenant = $result_tenants->fetch_assoc()) {
-    $tenants[] = $row_tenant;
-}
-$stmt_tenants->close();
-
 // Get pending issues count
 $pending_issues_count = 0;
 if ($user_id) {
     $sql_issues = "SELECT COUNT(*) AS count FROM issues WHERE status = 'pending'";
-    if ($role === 'tenant') {
-        $sql_issues .= " AND user_id = ?";
-    }
     $stmt_issues = $conn->prepare($sql_issues);
-    if ($role === 'tenant') {
-        $stmt_issues->bind_param("i", $user_id);
-    }
     $stmt_issues->execute();
     $result_issues = $stmt_issues->get_result();
     if ($result_issues) {
@@ -106,34 +57,13 @@ if ($user_id) {
     $stmt_notifications->close();
 }
 
-// Get rent status for the current month
-$rent_payment_status = 'N/A';
-$rent_description = 'Not applicable';
-if ($user_id && $role === 'tenant') {
-    $payment_for_month = date('Y-m-01');
-    $sql_rent = "SELECT p.status 
-                 FROM rentals r
-                 LEFT JOIN payments p ON r.id = p.rental_id AND p.payment_for_month = ?
-                 WHERE r.tenant_id = ? AND r.status = 'active'";
-    
-    $stmt_rent = $conn->prepare($sql_rent);
-    $stmt_rent->bind_param("si", $payment_for_month, $user_id);
-    $stmt_rent->execute();
-    $result_rent = $stmt_rent->get_result();
-
-    if ($result_rent && $result_rent->num_rows > 0) {
-        $row_rent = $result_rent->fetch_assoc();
-        $rent_payment_status = $row_rent['status'] ? ucfirst(str_replace('_', ' ', $row_rent['status'])) : 'Not Paid';
-    } else {
-        $rent_payment_status = 'Not Paid';
-    }
-
-    if ($rent_payment_status === 'Paid') {
-        $next_month = date('M jS', strtotime('first day of next month'));
-        $rent_description = 'Next payment due ' . $next_month;
-    } else {
-        $rent_description = 'Payment for this month is due';
-    }
+// Get number of tenants
+$tenants_count = 0;
+$sql_tenants = "SELECT COUNT(*) AS count FROM users WHERE role = 'tenant'";
+$result_tenants = $conn->query($sql_tenants);
+if ($result_tenants) {
+    $row_tenants = $result_tenants->fetch_assoc();
+    $tenants_count = $row_tenants['count'];
 }
 
 
@@ -166,137 +96,47 @@ $conn->close();
             </div>
         </div>
 
-        <!-- Tenant Complaints -->
-        <div class="issues-list">
-            <h2>Tenant Complaints</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tenant</th>
-                        <th>Issue</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $conn = getDBConnection();
-                    $sql = "SELECT i.issue_type, i.description, i.status, i.created_at, u.fullname 
-                            FROM issues i 
-                            JOIN users u ON i.user_id = u.id 
-                            ORDER BY i.created_at DESC";
-                    $result = $conn->query($sql);
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <a href="notifications.php" class="stat-card orange" style="text-decoration: none; color: white;">
+                <div class="stat-header">
+                    <span class="stat-label">NOTIFICATIONS</span>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value"><?php echo $unread_notifications_count; ?></div>
+                <div class="stat-description">New messages waiting</div>
+            </a>
 
-                    if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['fullname']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['issue_type']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['description']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['status']) . "</td>";
-                            echo "<td>" . date('M j, Y', strtotime($row['created_at'])) . "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='5'>No issues found</td></tr>";
-                    }
-                    // $conn->close(); // Connection closed at the end of the file
-                    ?>
-                </tbody>
-            </table>
-        </div>
+            <a href="tenants.php" class="stat-card green" style="text-decoration: none; color: white;">
+                <div class="stat-header">
+                    <span class="stat-label">TENANTS</span>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="17" y1="11" x2="23" y2="11"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value"><?php echo $tenants_count; ?></div>
+                <div class="stat-description">Total registered tenants</div>
+            </a>
 
-        <!-- Tenant Management -->
-        <div class="tenant-management">
-            <div class="issues-header">
-                <h2>Tenant Management - <?php echo ucfirst($filter_status); ?> Tenants</h2>
-                <form action="caretaker_dashboard.php" method="GET" class="tenant-filter-form">
-                    <select name="tenant_status" onchange="this.form.submit()">
-                        <option value="active" <?php echo ($filter_status === 'active') ? 'selected' : ''; ?>>Active</option>
-                        <option value="inactive" <?php echo ($filter_status === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
-                        <option value="all" <?php echo ($filter_status === 'all') ? 'selected' : ''; ?>>All</option>
-                    </select>
-                </form>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($tenants)): ?>
-                        <?php foreach($tenants as $tenant): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($tenant['fullname']); ?></td>
-                                <td><?php echo htmlspecialchars($tenant['email']); ?></td>
-                                <td><?php echo htmlspecialchars($tenant['phone_number'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($tenant['status']); ?></td>
-                                <td>
-                                    <?php if ($tenant['status'] === 'active'): ?>
-                                    <form method="POST" action="caretaker_dashboard.php" style="margin: 0;">
-                                        <input type="hidden" name="tenant_id" value="<?php echo $tenant['id']; ?>">
-                                        <button type="submit" name="remove_tenant" class="remove-btn">Remove</button>
-                                    </form>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="5">No tenants found.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Rent Status -->
-        <div class="rent-status">
-            <h2>Rent Status (Current Month)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tenant</th>
-                        <th>Room Number</th>
-                        <th>Rent Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // $conn = getDBConnection(); // Connection already established
-                    $payment_for_month = date('Y-m-01');
-                    $sql = "SELECT u.fullname, r.room_number, p.status 
-                            FROM users u
-                            JOIN rentals r ON u.id = r.tenant_id
-                            LEFT JOIN payments p ON r.id = p.rental_id AND p.payment_for_month = ?
-                            WHERE u.role = 'tenant' AND r.status = 'active'";
-                    
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("s", $payment_for_month);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-
-                    if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
-                            $rent_status = $row['status'] ? ucfirst(str_replace('_', ' ', $row['status'])) : 'Not Paid';
-                            echo "<tr>";
-                            echo "<td>" . htmlspecialchars($row['fullname']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['room_number'] ?? '') . "</td>";
-                            echo "<td>" . htmlspecialchars($rent_status) . "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='3'>No tenants found</td></tr>";
-                    }
-                    $stmt->close();
-                    $conn->close();
-                    ?>
-                </tbody>
-            </table>
+            <a href="issues.php" class="stat-card teal issues-card" style="text-decoration: none; color: white;">
+                <span class="issues-badge">ISSUES</span>
+                <div class="stat-value"><?php echo $pending_issues_count; ?></div>
+                <div class="stat-description">Increased from last month</div>
+                <div class="trend-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="18 15 12 9 6 15"/>
+                    </svg>
+                </div>
+            </a>
         </div>
     </div>
 
