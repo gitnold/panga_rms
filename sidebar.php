@@ -1,5 +1,6 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+$role = $_SESSION['role'];
 ?>
 <div class="sidebar">
     <div class="logo">
