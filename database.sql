@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS issues (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     issue_type ENUM('repair', 'complaint', 'maintenance', 'other') NOT NULL,
+    room_number VARCHAR(50),
     description TEXT NOT NULL,
     status ENUM('pending', 'in_progress', 'resolved', 'closed') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

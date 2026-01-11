@@ -14,6 +14,29 @@ $role = $_SESSION['role'];
 
 $conn = getDBConnection();
 
+// Handle deactivate action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deactivate_tenant'])) {
+    $tenant_id = $_POST['tenant_id'];
+    $stmt = $conn->prepare("UPDATE users SET status = 'inactive' WHERE id = ?");
+    $stmt->bind_param("i", $tenant_id);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: tenants.php?success=' . urlencode('Tenant deactivated successfully.'));
+    exit();
+}
+
+// Handle delete action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tenant'])) {
+    $tenant_id = $_POST['tenant_id'];
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt->bind_param("i", $tenant_id);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: tenants.php?success=' . urlencode('Tenant deleted successfully.'));
+    exit();
+}
+
+
 // Fetch all tenants with their rent status for the current month
 $tenants = [];
 $payment_for_month = date('Y-m-01');
@@ -72,6 +95,7 @@ $conn->close();
                         <th>Phone Number</th>
                         <th>Status</th>
                         <th>Rent Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,11 +107,21 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($tenant['phone_number'] ?? ''); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['status']); ?></td>
                                 <td><?php echo htmlspecialchars($tenant['rent_status'] ?? 'Not Paid'); ?></td>
+                                <td>
+                                    <form method="POST" action="tenants.php" style="display: inline-block;">
+                                        <input type="hidden" name="tenant_id" value="<?php echo $tenant['id']; ?>">
+                                        <button type="submit" name="deactivate_tenant" class="action-btn repair">Deactivate</button>
+                                    </form>
+                                    <form method="POST" action="tenants.php" style="display: inline-block;">
+                                        <input type="hidden" name="tenant_id" value="<?php echo $tenant['id']; ?>">
+                                        <button type="submit" name="delete_tenant" class="action-btn complain">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5">No tenants found.</td>
+                            <td colspan="6">No tenants found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

@@ -37,10 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_issue'])) {
     if ($user_id) {
         $issue_type = $_POST['issue_type'];
         $description = trim($_POST['description']);
+        $room_number = null;
+
+        // Get room number from active rental
+        $stmt_room = $conn->prepare("SELECT room_number FROM rentals WHERE tenant_id = ? AND status = 'active'");
+        $stmt_room->bind_param("i", $user_id);
+        $stmt_room->execute();
+        $result_room = $stmt_room->get_result();
+        if ($result_room->num_rows > 0) {
+            $room_data = $result_room->fetch_assoc();
+            $room_number = $room_data['room_number'];
+        }
+        $stmt_room->close();
 
         if (!empty($issue_type) && !empty($description)) {
-            $stmt = $conn->prepare("INSERT INTO issues (user_id, issue_type, description) VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $user_id, $issue_type, $description);
+            $stmt = $conn->prepare("INSERT INTO issues (user_id, issue_type, room_number, description) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("isss", $user_id, $issue_type, $room_number, $description);
             if ($stmt->execute()) {
                 header('Location: issues.php?success=' . urlencode('Issue submitted successfully.'));
                 exit();
@@ -241,6 +253,10 @@ if(isset($_GET['error'])) {
                         <option value="maintenance">Maintenance</option>
                         <option value="other">Other</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="room_number">Room Number</label>
+                    <input type="text" name="room_number" id="room_number" class="form-input" placeholder="Room Number" readonly>
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
