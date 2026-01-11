@@ -22,15 +22,19 @@ if (isset($_GET['issue_id'])) {
     $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
             FROM issues i 
             JOIN users u ON i.user_id = u.id 
-            WHERE i.id = ? AND i.user_id = ?";
+            WHERE i.id = ?";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $issue_id, $user_id);
+    $stmt->bind_param("i", $issue_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result && $result->num_rows > 0) {
         $issue = $result->fetch_assoc();
+        // If the user is a tenant, check if they are the owner of the issue
+        if ($role === 'tenant' && $issue['user_id'] !== $user_id) {
+            $issue = null;
+        }
     }
     $stmt->close();
 }
