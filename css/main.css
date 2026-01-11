@@ -545,12 +545,13 @@ tr:hover {
 }
 
 .modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
+    background: rgba(45, 77, 82, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 50px 40px;
+    width: 100%;
     max-width: 500px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
@@ -563,6 +564,7 @@ tr:hover {
 .modal-title {
     font-size: 24px;
     font-weight: 600;
+    color: #e5e7eb;
 }
 
 .close-modal-btn {
@@ -581,7 +583,7 @@ tr:hover {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #374151;
+    color: #d1d5db;
 }
 
 .form-group select, .form-group textarea {
