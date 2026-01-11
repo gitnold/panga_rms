@@ -188,14 +188,6 @@ $conn->close();
         </div>
 
         <div class="settings-container">
-            <?php if (isset($success_message)): ?>
-                <p class="alert alert-success"><?php echo $success_message; ?></p>
-            <?php endif; ?>
-
-            <?php if (isset($error_message)): ?>
-                <p class="alert alert-error"><?php echo $error_message; ?></p>
-            <?php endif; ?>
-
             <form action="tenant_settings.php" method="post" class="settings-form">
                 <div class="form-group">
                     <label for="fullname" class="form-label">Full Name:</label>
@@ -241,5 +233,29 @@ $conn->close();
             </form>
         </div>
     </div>
+
+    <div id="toast-notification" class="toast-notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toast = document.getElementById('toast-notification');
+
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = 'toast-notification show ' + (type === 'error' ? 'error' : '');
+                setTimeout(() => {
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+            }
+
+            <?php if (isset($success_message) && $success_message): ?>
+                showToast('<?php echo $success_message; ?>');
+            <?php endif; ?>
+
+            <?php if (isset($error_message) && $error_message): ?>
+                showToast('<?php echo $error_message; ?>', 'error');
+            <?php endif; ?>
+        });
+    </script>
 </body>
 </html>
