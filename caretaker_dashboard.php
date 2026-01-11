@@ -120,6 +120,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caretaker Dashboard - PangaRms</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/caretaker_dashboard.css">
 </head>
 <body>
     <?php include 'sidebar.php'; ?>
@@ -139,9 +140,8 @@ $conn->close();
             </div>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <div class="stat-card blue" style="text-decoration: none; color: white;">
+        <div class="revenue-card-container">
+            <div class="stat-card blue large-card" style="text-decoration: none; color: white;">
                 <div class="stat-header">
                     <span class="stat-label">MONTHLY REVENUE</span>
                     <div class="stat-icon">
@@ -153,7 +153,10 @@ $conn->close();
                 <div class="stat-value">Ksh <?php echo number_format($monthly_revenue, 2); ?></div>
                 <div class="stat-description">Revenue for this month</div>
             </div>
+        </div>
 
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid-small">
             <a href="notifications.php" class="stat-card orange" style="text-decoration: none; color: white;">
                 <div class="stat-header">
                     <span class="stat-label">NOTIFICATIONS</span>
