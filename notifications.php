@@ -66,12 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_as_finished'])) 
 // Fetch unread notifications
 $notifications = [];
 if ($user_id) {
-    $sql = "SELECT n.id, n.title, n.message, n.created_at, u.role as sender_role, s.fullname as sender_name, i.id as issue_id
+    $sql = "SELECT n.id, n.title, n.message, n.created_at, u.role as sender_role, s.fullname as sender_name, n.issue_id
             FROM notifications n
             JOIN notification_recipients nr ON n.id = nr.notification_id
             JOIN users u ON n.sender_id = u.id
             JOIN users s ON n.sender_id = s.id
-            LEFT JOIN issues i ON n.title = 'Issue Completed' AND i.user_id = nr.recipient_id
             WHERE nr.recipient_id = ? AND nr.is_read = FALSE
             ORDER BY n.created_at DESC";
     

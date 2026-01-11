@@ -78,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_issue'])) {
                     // Create a notification for the tenant
                     $notification_title = "Issue Resolved";
                     $notification_message = "Your issue '" . substr($issue_description, 0, 50) . "...' has been marked as resolved by the caretaker.";
-                    $stmt_notification = $conn->prepare("INSERT INTO notifications (sender_id, title, message) VALUES (?, ?, ?)");
-                    $stmt_notification->bind_param("iss", $user_id, $notification_title, $notification_message);
+                    $stmt_notification = $conn->prepare("INSERT INTO notifications (sender_id, title, message, issue_id) VALUES (?, ?, ?, ?)");
+                    $stmt_notification->bind_param("issi", $user_id, $notification_title, $notification_message, $issue_id);
                     $stmt_notification->execute();
                     $notification_id = $stmt_notification->insert_id;
 
