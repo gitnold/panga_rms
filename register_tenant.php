@@ -142,14 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span>Pay Rent</span>
             </a>
             <?php elseif ($role === 'caretaker'): ?>
-            <a href="register_tenant.php" class="nav-item active">
+            <a href="tenants.php" class="nav-item active">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="8.5" cy="7" r="4"/>
                     <line x1="20" y1="8" x2="20" y2="14"/>
                     <line x1="17" y1="11" x2="23" y2="11"/>
                 </svg>
-                <span>Register Tenant</span>
+                <span>Tenants</span>
             </a>
             <?php endif; ?>
             <a href="issues.php" class="nav-item">
@@ -166,6 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="nav-section">
             <div class="nav-title">GENERAL</div>
+            <?php if ($role !== 'tenant'): ?>
             <a href="settings.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
                     <circle cx="12" cy="12" r="3"></circle>
@@ -173,7 +174,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </svg>
                 <span>Settings</span>
             </a>
-
+            <?php else: ?>
+            <a href="tenant_settings.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Tenant Settings</span>
+            </a>
+            <?php endif; ?>
+            <a href="help.php" class="nav-item">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-help-circle">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Help</span>
+            </a>
             <a href="logout.php" class="nav-item">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
