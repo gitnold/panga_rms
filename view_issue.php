@@ -19,7 +19,7 @@ $issue = null;
 if (isset($_GET['issue_id'])) {
     $issue_id = $_GET['issue_id'];
 
-    $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname 
+    $sql = "SELECT i.id, i.issue_type, i.description, i.status, i.created_at, u.fullname, i.user_id 
             FROM issues i 
             JOIN users u ON i.user_id = u.id 
             WHERE i.id = ?";
