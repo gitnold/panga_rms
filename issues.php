@@ -283,7 +283,7 @@ if(isset($_GET['error'])) {
             <form action="issues.php" method="POST">
                 <div class="form-group">
                     <label for="issue_type">Issue Type</label>
-                    <select name="issue_type" id="issue_type">
+                    <select name="issue_type" id="issue_type" class="form-input-light">
                         <option value="repair">Repair</option>
                         <option value="complaint">Complaint</option>
                         <option value="maintenance">Maintenance</option>
@@ -292,7 +292,7 @@ if(isset($_GET['error'])) {
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea name="description" id="description" placeholder="Please describe the issue in detail."></textarea>
+                    <textarea name="description" id="description" placeholder="Please describe the issue in detail." class="form-input-light"></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="submit" name="submit_issue" class="submit-btn">Submit Issue</button>

@@ -196,7 +196,7 @@ if ($user_id && $role === 'tenant') {
                 <div class="payment-title">Payment Details</div>
                 <form action="rent.php" method="POST">
                     <div class="phone-input-wrapper">
-                        <input type="text" class="form-input" placeholder="+254XXXXXXXXX" name="phone_number">
+                        <input type="text" class="form-input form-input-light" placeholder="+254XXXXXXXXX" name="phone_number">
                     </div>
                     <div class="payment-info">Paybill: 234544 Account No: 2345</div>
                     <div class="payment-actions">

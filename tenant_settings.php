@@ -199,17 +199,17 @@ $conn->close();
             <form action="tenant_settings.php" method="post" class="settings-form">
                 <div class="form-group">
                     <label for="fullname">Full Name:</label>
-                    <input type="text" id="fullname" name="fullname" class="form-input" value="<?php echo htmlspecialchars($current_fullname); ?>" required>
+                    <input type="text" id="fullname" name="fullname" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_fullname); ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="phone_number">Phone Number:</label>
-                    <input type="text" id="phone_number" name="phone_number" class="form-input" value="<?php echo htmlspecialchars($current_phone_number); ?>" required>
+                    <input type="text" id="phone_number" name="phone_number" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_phone_number); ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" class="form-input" value="<?php echo htmlspecialchars($current_email); ?>" required>
+                    <input type="email" id="email" name="email" class="form-input form-input-light" value="<?php echo htmlspecialchars($current_email); ?>" required>
                 </div>
 
                 <div class="form-actions">
@@ -223,15 +223,15 @@ $conn->close();
             <form action="tenant_settings.php" method="post" class="settings-form">
                 <div class="form-group">
                     <label for="current_password">Current Password:</label>
-                    <input type="password" id="current_password" name="current_password" class="form-input" required>
+                    <input type="password" id="current_password" name="current_password" class="form-input form-input-light" required>
                 </div>
                 <div class="form-group">
                     <label for="new_password">New Password:</label>
-                    <input type="password" id="new_password" name="new_password" class="form-input" required>
+                    <input type="password" id="new_password" name="new_password" class="form-input form-input-light" required>
                 </div>
                 <div class="form-group">
                     <label for="confirm_new_password">Confirm New Password:</label>
-                    <input type="password" id="confirm_new_password" name="confirm_new_password" class="form-input" required>
+                    <input type="password" id="confirm_new_password" name="confirm_new_password" class="form-input form-input-light" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" name="change_password" class="submit-btn">Change Password</button>
