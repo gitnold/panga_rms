@@ -194,7 +194,7 @@ if ($user_id) {
                         </div>
                         <form method="POST" action="notifications.php" style="margin: 0;">
                             <input type="hidden" name="notification_id" value="<?php echo $notification['id']; ?>">
-                            <?php if ($notification['title'] === 'Issue Completed'): ?>
+                            <?php if ($notification['title'] === 'Issue Resolved'): ?>
                                 <input type="hidden" name="issue_id" value="<?php echo $notification['issue_id']; ?>">
                                 <button type="submit" name="mark_as_finished" class="mark-read-btn">Mark as Finished</button>
                             <?php else: ?>

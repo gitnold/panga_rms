@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_issue'])) {
     $issue_id = $_POST['issue_id'];
     if ($user_id && $issue_id && $role === 'caretaker') {
         // Update issue status
-        $stmt_update = $conn->prepare("UPDATE issues SET status = 'completed' WHERE id = ?");
+        $stmt_update = $conn->prepare("UPDATE issues SET status = 'resolved' WHERE id = ?");
         $stmt_update->bind_param("i", $issue_id);
         
         if ($stmt_update->execute()) {
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_issue'])) {
                 $tenant_id = $issue_tenant['user_id'];
 
                 // Create a notification for the tenant
-                $notification_title = "Issue Completed";
-                $notification_message = "Your issue has been marked as completed by the caretaker.";
+                $notification_title = "Issue Resolved";
+                $notification_message = "Your issue has been marked as resolved by the caretaker.";
                 $stmt_notification = $conn->prepare("INSERT INTO notifications (sender_id, title, message) VALUES (?, ?, ?)");
                 $stmt_notification->bind_param("iss", $user_id, $notification_title, $notification_message);
                 $stmt_notification->execute();
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['complete_issue'])) {
                 $stmt_recipient->execute();
             }
 
-            header('Location: issues.php?success=' . urlencode('Issue has been marked as completed.'));
+            header('Location: issues.php?success=' . urlencode('Issue has been marked as resolved.'));
             exit();
         } else {
             $error_message = "Error: Could not complete the issue.";
