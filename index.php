@@ -43,7 +43,7 @@
                 <input type="hidden" name="role" id="loginRole" value="tenant">
                 
                 <div class="form-group">
-                    <input type="text" name="username" class="form-input" placeholder="Email or username" required>
+                    <input type="text" name="login_identifier" class="form-input" placeholder="Email or Phone Number" required>
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-input" placeholder="Password" required>
@@ -63,7 +63,7 @@
                     <input type="email" name="email" class="form-input" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="username" class="form-input" placeholder="Username" required>
+                    <input type="text" name="phone_number" class="form-input" placeholder="Phone Number" required>
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="form-input" placeholder="Password" required>

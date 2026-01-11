@@ -8,7 +8,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || $_SESSI
 }
 
 $fullname = $_SESSION['fullname'];
-$username = $_SESSION['username'];
 $email = $_SESSION['email'];
 $role = $_SESSION['role'];
 
@@ -20,16 +19,14 @@ $success_message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname_tenant = $_POST['fullname'];
     $room_number = $_POST['room_number'];
-    $id_number = $_POST['id_number'];
     $phone_number = $_POST['phone_number'];
     $new_email = trim($_POST['email']);
-    $new_username = trim($_POST['username']);
     
     // Default password for new tenants, can be changed later
     $new_password = password_hash('password123', PASSWORD_DEFAULT);
 
     // Basic validation
-    if (empty($fullname_tenant) || empty($room_number) || empty($id_number) || empty($phone_number) || empty($new_email) || empty($new_username)) {
+    if (empty($fullname_tenant) || empty($room_number) || empty($phone_number) || empty($new_email)) {
         $error_message = "All fields are required.";
         $conn->close();
         return;
@@ -41,16 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    // Check for uniqueness of email and username
-    $stmt_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR username = ?");
-    $stmt_check->bind_param("ss", $new_email, $new_username);
+    // Check for uniqueness of email and phone number
+    $stmt_check = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ? OR phone_number = ?");
+    $stmt_check->bind_param("ss", $new_email, $phone_number);
     $stmt_check->execute();
     $stmt_check->bind_result($count);
     $stmt_check->fetch();
     $stmt_check->close();
 
     if ($count > 0) {
-        $error_message = "Email or Username already exists.";
+        $error_message = "Email or Phone Number already exists.";
         $conn->close();
         return;
     }
@@ -60,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Insert new user
-        $stmt_user = $conn->prepare("INSERT INTO users (fullname, email, username, password, phone_number, role) VALUES (?, ?, ?, ?, ?, 'tenant')");
-        $stmt_user->bind_param("sssss", $fullname_tenant, $new_email, $new_username, $new_password, $phone_number);
+        $stmt_user = $conn->prepare("INSERT INTO users (fullname, email, password, phone_number, role) VALUES (?, ?, ?, ?, 'tenant')");
+        $stmt_user->bind_param("ssss", $fullname_tenant, $new_email, $new_password, $phone_number);
         if (!$stmt_user->execute()) {
             throw new Exception("Error registering user: " . $stmt_user->error);
         }
@@ -82,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_rental->close();
 
         $conn->commit();
-        $success_message = "Tenant registered successfully. Username: $new_username, Password: password123";
+        $success_message = "Tenant registered successfully. Password: password123";
     } catch (Exception $e) {
         $conn->rollback();
         $error_message = "Registration failed: " . $e->getMessage();
@@ -130,20 +127,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" class="form-input form-input-light" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" class="form-input form-input-light" required>
-                </div>
                 
                 <div class="form-group">
                     <label for="room_number">Room Number:</label>
                     <input type="text" id="room_number" name="room_number" class="form-input form-input-light" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="id_number">ID Number:</label>
-                    <input type="text" id="id_number" name="id_number" class="form-input form-input-light" required>
                 </div>
 
                 <div class="form-group">
