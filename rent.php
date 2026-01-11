@@ -121,6 +121,7 @@ if ($user_id && $role === 'tenant') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay Rent - PangaRms</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/inputs.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -195,7 +196,7 @@ if ($user_id && $role === 'tenant') {
                 <div class="payment-title">Payment Details</div>
                 <form action="rent.php" method="POST">
                     <div class="phone-input-wrapper">
-                        <input type="text" class="phone-input" placeholder="+254XXXXXXXXX" name="phone_number">
+                        <input type="text" class="form-input" placeholder="+254XXXXXXXXX" name="phone_number">
                     </div>
                     <div class="payment-info">Paybill: 234544 Account No: 2345</div>
                     <div class="payment-actions">
