@@ -43,6 +43,13 @@ $role = $_SESSION['role'];
             </svg>
             <span>Tenants</span>
         </a>
+        <a href="caretaker_announcements.php" class="nav-item <?php echo ($current_page == 'caretaker_announcements.php') ? 'active' : ''; ?>">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+            </svg>
+            <span>Announcements</span>
+        </a>
         <a href="register_tenant.php" class="nav-item <?php echo ($current_page == 'register_tenant.php') ? 'active' : ''; ?>">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>

@@ -121,3 +121,13 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (rental_id) REFERENCES rentals(id) ON DELETE CASCADE,
     UNIQUE KEY (rental_id, payment_for_month)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create announcements table
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    caretaker_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (caretaker_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

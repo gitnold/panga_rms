@@ -93,6 +93,30 @@ if ($user_id && $role === 'tenant') {
     }
 }
 
+// Get latest announcement
+$latest_announcement = null;
+if ($user_id && $role === 'tenant') {
+    // Find caretaker ID first
+    $stmt_ct = $conn->prepare("SELECT caretaker_id FROM rentals WHERE tenant_id = ? AND status = 'active' LIMIT 1");
+    $stmt_ct->bind_param("i", $user_id);
+    $stmt_ct->execute();
+    $res_ct = $stmt_ct->get_result();
+    if ($res_ct && $res_ct->num_rows > 0) {
+        $ct = $res_ct->fetch_assoc();
+        $caretaker_id = $ct['caretaker_id'];
+        
+        $stmt_ann = $conn->prepare("SELECT title, message, created_at FROM announcements WHERE caretaker_id = ? ORDER BY created_at DESC LIMIT 1");
+        $stmt_ann->bind_param("i", $caretaker_id);
+        $stmt_ann->execute();
+        $res_ann = $stmt_ann->get_result();
+        if ($res_ann && $res_ann->num_rows > 0) {
+            $latest_announcement = $res_ann->fetch_assoc();
+        }
+        $stmt_ann->close();
+    }
+    $stmt_ct->close();
+}
+
 
 $conn->close();
 ?>
@@ -127,10 +151,16 @@ $conn->close();
         <div class="announcement-card">
             <div class="announcement-content">
                 <h2 class="announcement-title">Announcements</h2>
-                <p class="announcement-text">There will be maintenance as from Fri 20th December</p>
-                <button class="see-more-btn">
+                <?php if ($latest_announcement): ?>
+                    <h3 style="margin: 5px 0 10px 0; font-size: 1.1em; color: white;"><?php echo htmlspecialchars($latest_announcement['title']); ?></h3>
+                    <p class="announcement-text" style="margin-bottom: 5px;"><?php echo htmlspecialchars($latest_announcement['message']); ?></p>
+                    <small style="color: rgba(255,255,255,0.8); display: block; margin-bottom: 10px;"><?php echo date('M j, Y', strtotime($latest_announcement['created_at'])); ?></small>
+                <?php else: ?>
+                    <p class="announcement-text">No announcements at this time.</p>
+                <?php endif; ?>
+                <a href="notifications.php" class="see-more-btn" style="text-decoration: none; display: inline-block; cursor: pointer;">
                     See More →
-                </button>
+                </a>
             </div>
             <div class="announcement-image">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
