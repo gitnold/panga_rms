@@ -33,7 +33,6 @@
                 <div class="role-buttons">
                     <button class="role-btn active" data-role="tenant">tenant</button>
                     <button class="role-btn" data-role="caretaker">caretaker</button>
-                    <button class="role-btn" data-role="landlord">landlord</button>
                 </div>
             </div>
 
