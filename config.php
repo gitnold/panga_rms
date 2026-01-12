@@ -1,8 +1,8 @@
 <?php
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_USER', 'phpuser');
-define('DB_PASS', 'php_pass');
+define('DB_USER', 'php_user');
+define('DB_PASS', 'Php_pass@2026');
 define('DB_NAME', 'panga_rms');
 
 // Create connection

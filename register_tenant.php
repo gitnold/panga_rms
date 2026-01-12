@@ -137,6 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 
                 <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="form-input form-input-light" required>
+                </div>
+                 
+                <div class="form-group">
                     <label for="room_number">Room Number:</label>
                     <input type="text" id="room_number" name="room_number" class="form-input form-input-light" required>
                 </div>

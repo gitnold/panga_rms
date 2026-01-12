@@ -197,6 +197,23 @@ $conn->close();
                 </div>
             </a>
         </div>
+        
+         <!-- Post Announcement Section -->
+        <div class="announcement-section" style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0; color: #333; font-size: 1.2rem; margin-bottom: 15px;">Post Announcement</h2>
+            <form action="caretaker_dashboard.php" method="POST">
+                <div style="margin-bottom: 15px;">
+                    <label for="title" style="display: block; margin-bottom: 5px; color: #666;">Title</label>
+                    <input type="text" id="title" name="title" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="message" style="display: block; margin-bottom: 5px; color: #666;">Message</label>
+                    <textarea id="message" name="message" rows="4" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" name="post_announcement" style="background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Post Announcement</button>
+            </form>
+        </div>
+
 
 
     </div>
